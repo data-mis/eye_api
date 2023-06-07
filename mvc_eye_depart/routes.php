@@ -205,8 +205,8 @@
                 $name_file = $std_id.strrchr( $_FILES['file']['name'] , '.' );
                 $tmp_name =  $_FILES['file']['tmp_name'];
                 $folder = substr($std_id,0,2);
-                $structure = "./images/".$folder;
-                $images = glob("./images/".$folder."/*.*");
+                $structure = "./images/student/".$folder;
+                $images = glob("./images/student/".$folder."/*.*");
                 $ext = $structure."/".$std_id;
                 if(!empty($std_id)){
                     if ( !!$_FILES['file']['tmp_name'] ){
@@ -268,9 +268,10 @@
                 $data = json_decode(file_get_contents("php://input",true));
                 $std_id = $data->std_id;
                 $folder = substr($std_id,0,2);
-                $structure = "./images/".$folder;
-                $images = glob("./images/".$folder."/*.*");
+                $structure = "./images/student/".$folder;
+                $images = glob("./images/student/".$folder."/*.*");
                 $ext = $structure."/".$std_id;
+                $test = "/images/61/610710001.jpg";
                 if(!empty($std_id)){
                     if(is_dir($structure)){
                         for ($i = 0; $i<count($images); $i++) {
@@ -281,10 +282,11 @@
                             }
                           }
                     }else{
-                        echo json_encode(array('error' => 'Failed to directories '.$structure,'status' => FALSE));
+                        //echo json_encode(array('error' => 'Failed to directories '.$structure,'status' => FALSE));
+                        echo json_encode(array('url' => $_SERVER['SERVER_NAME'].dirname($_SERVER['PHP_SELF']).$test,'status' => TRUE));
                     }
                 }else{
-
+                    echo json_encode(array('error' => 'No Data','status' => FALSE));
                 }
             }else{
                 echo json_encode(array('error' => 'No Data','status' => FALSE));
@@ -382,21 +384,21 @@
 /*                                                                                                                                                                */
 
      /*  controllers/group  */
-    //  router::set('get_group',function(){
-    //     require_once('./controllers/group.php');
-    //     $bearer_token = get_bearer_token();
-    //     $is_jwt_valid = is_jwt_valid($bearer_token);
-    //     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    //         if($is_jwt_valid) {
-    //             $data = json_decode(file_get_contents("php://input",true));
-    //             $year = $data->year;
-    //             get_group($year);
-    //         }else{
-    //             echo json_encode(array('error' => 'Access denied','status' => '0'));
-    //         }
-    //     }else{
-    //         echo json_encode(array('error' => 'Invalid Method'.' '.$_SERVER['REQUEST_METHOD'],'status' => '0')); 
-    //     }
-    // });
+     router::set('get_group',function(){
+        require_once('./controllers/group.php');
+        $bearer_token = get_bearer_token();
+        $is_jwt_valid = is_jwt_valid($bearer_token);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if($is_jwt_valid) {
+                $data = json_decode(file_get_contents("php://input",true));
+                $year = $data->year;
+                get_group($year);
+            }else{
+                echo json_encode(array('error' => 'Access denied','status' => '0'));
+            }
+        }else{
+            echo json_encode(array('error' => 'Invalid Method'.' '.$_SERVER['REQUEST_METHOD'],'status' => '0')); 
+        }
+    });
 
 ?>
