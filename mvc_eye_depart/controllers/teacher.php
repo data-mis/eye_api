@@ -16,9 +16,9 @@
 
         $results = dbQuery($sql);
         if($results) {
-            echo json_encode(array('success' => 'You insert teacher successfully'));
+            echo json_encode(array('success' => 'You insert teacher successfully','status' => TRUE));
         } else {
-            echo json_encode(array('error' => 'Something went wrong, please contact administrator'));
+            echo json_encode(array('error' => 'Something went wrong, please contact administrator','status' => FALSE));
         }
     }
 
@@ -29,9 +29,9 @@
 
         $results = dbQuery($sql);
         if($results) {
-            echo json_encode(array('success' => 'You delete teacher successfully'));
+            echo json_encode(array('success' => 'You delete teacher successfully','status' => TRUE));
         } else {
-            echo json_encode(array('error' => 'Something went wrong, please contact administrator'));
+            echo json_encode(array('error' => 'Something went wrong, please contact administrator','status' => FALSE));
         }
     }
 
@@ -42,9 +42,9 @@
 
         $results = dbQuery($sql);
         if($results) {
-            echo json_encode(array('success' => 'You edit teacher successfully'));
+            echo json_encode(array('success' => 'You edit teacher successfully','status' => TRUE));
         } else {
-            echo json_encode(array('error' => 'Something went wrong, please contact administrator'));
+            echo json_encode(array('error' => 'Something went wrong, please contact administrator','status' => FALSE));
         }
     }
 ?>

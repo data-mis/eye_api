@@ -32,8 +32,9 @@
     }
 
     function get_student_grp(){
-        $sql = "SELECT name,id,start,stop from grp where year_=year(curdate()) 
-                FROM grp 
+        $sql = "SELECT name,id,start,stop 
+                FROM grp
+                WHERE year_=year(curdate()) 
                 ORDER BY name ";
         $results = dbQuery($sql);
         $rows = array();
