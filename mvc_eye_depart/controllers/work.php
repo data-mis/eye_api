@@ -107,5 +107,282 @@
         echo json_encode($rows);
     }
 
+    function add_work_01($sheet_id,$advisor_id,$grp_id,$date,$time_begin,$time_end,$student_id,$caption,$txt,$txt1,$txt_val1,$txt2,$txt_val2,$txt3,$txt_val3,$txt5,$txt_val5,$txt6,$txt_val6,$txt7,$txt_val7,$txt_val6_1,$txt_val7_1){
+        $sql = "INSERT INTO work SET sheet_id='".$sheet_id."',advisor_id='".$advisor_id."',grp_id='".$grp_id."',date='".$date."'
+                ,time_begin='".$time_begin."',time_end='".$time_end."',student_id='".$student_id."' ";
+
+        $results = dbQuery($sql);
+
+        $sql1 = "SELECT last_insert_id() as last_ ";
+        $results1 = dbQuery($sql1);
+        $row = dbFetchAssoc($results1);
+        $work_id = $row['last_'];
+
+        switch ($txt) {
+            case 1:
+                $txt_val = 'จักษุ(ช)';
+            case 2:
+                $txt_val = 'จักษุ(ญ)';
+            case 3:
+                $txt_val = 'พิเศษ';
+            default:
+                $txt_val = '';
+        }
+
+        $sql3 = "INSERT INTO work_head SET work_id='".$work_id."',txt='".$caption."',txt_val='".$txt_val."' ";
+        $results3 = dbQuery($sql3);
+
+        $sql4 = "INSERT INTO work_head SET work_id='".$work_id."',txt='".$txt1."',txt_val='".$txt_val1."' ";
+        $results4 = dbQuery($sql4);
+
+        $sql5 = "INSERT INTO work_head SET work_id='".$work_id."',txt='".$txt2."',txt_val='".$txt_val2."' ";
+        $results5 = dbQuery($sql5);
+
+        $sql6 = "INSERT INTO work_head SET work_id='".$work_id."',txt='".$txt3."',txt_val='".$txt_val3."' ";
+        $results6 = dbQuery($sql6);
+
+        $sql7 = "INSERT INTO work_head SET work_id='".$work_id."',txt='".$txt4."',txt_val='".$txt_val4."' ";
+        $results7 = dbQuery($sql7);
+
+        $sql8 = "INSERT INTO work_head SET work_id='".$work_id."',txt='".$txt5."',txt_val='".$txt_val5."' ";
+        $results8 = dbQuery($sql8);
+
+        $sql9 = "INSERT INTO work_head SET work_id='".$work_id."',txt='".$txt6."',txt_val='".$txt_val6."' ";
+        $results9 = dbQuery($sql9);
+
+        $sql10 = "INSERT INTO work_head SET work_id='".$work_id."',txt='".$txt7."',txt_val='".$txt_val7."' ";
+        $results10 = dbQuery($sql10);
+
+        /* check 72 hour */
+        $sql11 = "SELECT id FROM work_detail WHERE work_id='".$work_id."' AND student_id='".$student_id."' ";
+        $results11 = dbQuery($sql11);
+        $row = dbFetchAssoc($results11);
+        $rows = dbNumRows($results11);
+        if $rows > 0 {
+            $work_detail_id = $row['id'];
+        }else{
+            $sql12 = "INSERT INTO work_detail SET work_id='".$work_id."',student_id='".$student_id."',d_update=curdate() ";
+            $results12 = dbQuery($sql12);
+            $sql13 = "SELECT last_insert_id() as last_ ";
+            $results13 = dbQuery($sql13);
+            $row13 = dbFetchAssoc($results13);
+            $work_detail_id = $row13['last_'];
+        }
+        
+        /*  เกิน 3 วันไม่ได้คะแนน  */ 
+        if(date('Y-M-d',strtotime($txt_val7_1))-date('Y-M-d',strtotime($txt_val6_1))) > 3 {
+            $sql14 = "INSERT INTO work_score SET work_detail_id='".$work_detail_id."',score=0 ";
+            $results14 = dbQuery($sql12);
+        } else {
+            $sql15 = "INSERT INTO work_score SET work_detail_id='".$work_detail_id."',score=1 ";
+            $results15 = dbQuery($sql15);
+        }
+         
+    }
+    
+    function add_work_02($sheet_id,$advisor_id,$student_id,$date,$time_begin,$time_end){
+        $sql = "INSERT INTO work SET sheet_id='".$sheet_id."',advisor_id='".$advisor_id."',student_id='".$student_id."',date='".$date."'
+                ,time_begin='".$time_begin."',time_end='".$time_end."' ";
+
+        $results = dbQuery($sql);
+        
+    }
+
+    function add_work_03($sheet_id,$advisor_id,$grp_id,$date,$time_begin,$time_end){
+        $sql = "INSERT INTO work SET sheet_id='".$sheet_id."',advisor_id='".$advisor_id."',grp_id='".$grp_id."',date='".$date."'
+                ,time_begin='".$time_begin."',time_end='".$time_end."' ";
+
+        $results = dbQuery($sql);
+        
+    }
+    
+    function add_work_04($sheet_id,$advisor_id,$grp_id,$date,$time_begin,$time_end){
+        $sql = "INSERT INTO work SET sheet_id='".$sheet_id."',advisor_id='".$advisor_id."',grp_id='".$grp_id."',date='".$date."'
+                ,time_begin='".$time_begin."',time_end='".$time_end."' ";
+
+        $results = dbQuery($sql);
+        
+    }
+
+    function add_work_05($sheet_id,$advisor_id,$grp_id,$date,$time_begin,$time_end,$txt_val){
+        $sql = "INSERT INTO work SET sheet_id='".$sheet_id."',advisor_id='".$advisor_id."',grp_id='".$grp_id."',date='".$date."'
+                ,time_begin='".$time_begin."',time_end='".$time_end."' ";
+
+        $results = dbQuery($sql);
+        
+        $sql1 = "SELECT last_insert_id() as last_ ";
+        $results1 = dbQuery($sql1);
+        $row = dbFetchAssoc($results1);
+        $work_id = $row['last_'];
+
+        $sql3 = "INSERT INTO work_head SET work_id='".$work_id."',txt='หัวข้อเรื่อง',txt_val='".$txt_val."' ";
+        $results3 = dbQuery($sql3);
+        
+    }
+
+    function add_work_06($sheet_id,$advisor_id,$grp_id,$date,$time_begin,$time_end,$txt_val){
+        $sql = "INSERT INTO work SET sheet_id='".$sheet_id."',advisor_id='".$advisor_id."',grp_id='".$grp_id."',date='".$date."'
+                ,time_begin='".$time_begin."',time_end='".$time_end."' ";
+
+        $results = dbQuery($sql);
+        
+        $sql1 = "SELECT last_insert_id() as last_ ";
+        $results1 = dbQuery($sql1);
+        $row = dbFetchAssoc($results1);
+        $work_id = $row['last_'];
+        
+        $sql3 = "INSERT INTO work_head SET work_id='".$work_id."',txt='หัวข้อเรื่อง',txt_val='".$txt_val."' ";
+        $results3 = dbQuery($sql3);
+        
+    }
+
+    function add_work_07($sheet_id,$advisor_id,$grp_id,$date,$time_begin,$time_end){
+        $sql = "INSERT INTO work SET sheet_id='".$sheet_id."',advisor_id='".$advisor_id."',grp_id='".$grp_id."',date='".$date."'
+                ,time_begin='".$time_begin."',time_end='".$time_end."' ";
+
+        $results = dbQuery($sql);
+        
+    }
+
+    function edit_work_01($work_id,$sheet_id,$advisor_id,$grp_id,$date,$time_begin,$time_end,$student_id,$caption,$txt,$txt1,$txt_val1,$txt2,$txt_val2,$txt3,$txt_val3,$txt5,$txt_val5,$txt6,$txt_val6,$txt7,$txt_val7,$txt_val6_1,$txt_val7_1){
+        $sql = "UPDATE work SET sheet_id='".$sheet_id."',advisor_id='".$advisor_id."',grp_id='".$grp_id."',date='".$date."'
+                ,time_begin='".$time_begin."',time_end='".$time_end."',student_id='".$student_id."' WHERE id='".$work_id."' ";
+
+        $results = dbQuery($sql);
+
+        $sql1 = "DELETE FROM work_head WHERE work_id='".$work_id."' ";
+        $results1 = dbQuery($sql1);
+
+        switch ($txt) {
+            case 1:
+                $txt_val = 'จักษุ(ช)';
+            case 2:
+                $txt_val = 'จักษุ(ญ)';
+            case 3:
+                $txt_val = 'พิเศษ';
+            default:
+                $txt_val = '';
+        }
+
+        $sql3 = "INSERT INTO work_head SET work_id='".$work_id."',txt='".$caption."',txt_val='".$txt_val."' ";
+        $results3 = dbQuery($sql3);
+
+        $sql4 = "INSERT INTO work_head SET work_id='".$work_id."',txt='".$txt1."',txt_val='".$txt_val1."' ";
+        $results4 = dbQuery($sql4);
+
+        $sql5 = "INSERT INTO work_head SET work_id='".$work_id."',txt='".$txt2."',txt_val='".$txt_val2."' ";
+        $results5 = dbQuery($sql5);
+
+        $sql6 = "INSERT INTO work_head SET work_id='".$work_id."',txt='".$txt3."',txt_val='".$txt_val3."' ";
+        $results6 = dbQuery($sql6);
+
+        $sql7 = "INSERT INTO work_head SET work_id='".$work_id."',txt='".$txt4."',txt_val='".$txt_val4."' ";
+        $results7 = dbQuery($sql7);
+
+        $sql8 = "INSERT INTO work_head SET work_id='".$work_id."',txt='".$txt5."',txt_val='".$txt_val5."' ";
+        $results8 = dbQuery($sql8);
+
+        $sql9 = "INSERT INTO work_head SET work_id='".$work_id."',txt='".$txt6."',txt_val='".$txt_val6."' ";
+        $results9 = dbQuery($sql9);
+
+        $sql10 = "INSERT INTO work_head SET work_id='".$work_id."',txt='".$txt7."',txt_val='".$txt_val7."' ";
+        $results10 = dbQuery($sql10);
+
+        /* check 72 hour */
+        $sql11 = "SELECT id FROM work_detail WHERE work_id='".$work_id."' AND student_id='".$student_id."' ";
+        $results11 = dbQuery($sql11);
+        $row = dbFetchAssoc($results11);
+        $rows = dbNumRows($results11);
+        if $rows > 0 {
+            $work_detail_id = $row['id'];
+        }else{
+            $sql12 = "INSERT INTO work_detail SET work_id='".$work_id."',student_id='".$student_id."',d_update=curdate() ";
+            $results12 = dbQuery($sql12);
+            $sql13 = "SELECT last_insert_id() as last_ ";
+            $results13 = dbQuery($sql13);
+            $row13 = dbFetchAssoc($results13);
+            $work_detail_id = $row13['last_'];
+        }
+        
+        /*  เกิน 3 วันไม่ได้คะแนน  */ 
+        if(date('Y-M-d',strtotime($txt_val7_1))-date('Y-M-d',strtotime($txt_val6_1))) > 3 {
+            $sql14 = "UPDATE work_score SET score=0 WHERE work_detail_id='".$work_detail_id."' AND sheet_detail_id=0 ";
+            $results14 = dbQuery($sql12);
+        } else {
+            $sql15 = "UPDATE work_score SET score=1 WHERE work_detail_id='".$work_detail_id."' AND sheet_detail_id=0 ";
+            $results15 = dbQuery($sql15);
+        }
+         
+    }
+
+    function edit_work_02($work_id,$sheet_id,$advisor_id,$student_id,$date,$time_begin,$time_end){
+        $sql = "UPDATE work SET sheet_id='".$sheet_id."',advisor_id='".$advisor_id."',student_id='".$student_id."',date='".$date."'
+                ,time_begin='".$time_begin."',time_end='".$time_end."' WHERE id='".$work_id."' ";
+
+        $results = dbQuery($sql);
+
+        $sql1 = "DELETE FROM work_head WHERE work_id='".$work_id."' ";
+        $results1 = dbQuery($sql1);
+        
+    }
+
+    function edit_work_03($work_id,$sheet_id,$advisor_id,$grp_id,$date,$time_begin,$time_end){
+        $sql = "UPDATE work SET sheet_id='".$sheet_id."',advisor_id='".$advisor_id."',grp_id='".$grp_id."',date='".$date."'
+                ,time_begin='".$time_begin."',time_end='".$time_end."' WHERE id='".$work_id."' ";
+
+        $results = dbQuery($sql);
+
+        $sql1 = "DELETE FROM work_head WHERE work_id='".$work_id."' ";
+        $results1 = dbQuery($sql1);
+        
+    }
+    
+    function edit_work_04($work_id,$sheet_id,$advisor_id,$grp_id,$date,$time_begin,$time_end){
+        $sql = "UPDATE work SET sheet_id='".$sheet_id."',advisor_id='".$advisor_id."',grp_id='".$grp_id."',date='".$date."'
+                ,time_begin='".$time_begin."',time_end='".$time_end."' WHERE id='".$work_id."' ";
+
+        $results = dbQuery($sql);
+
+        $sql1 = "DELETE FROM work_head WHERE work_id='".$work_id."' ";
+        $results1 = dbQuery($sql1);
+        
+    }
+
+    function edit_work_05($work_id,$sheet_id,$advisor_id,$grp_id,$date,$time_begin,$time_end,$txt_val){
+        $sql = "UPDATE work SET sheet_id='".$sheet_id."',advisor_id='".$advisor_id."',grp_id='".$grp_id."',date='".$date."'
+                ,time_begin='".$time_begin."',time_end='".$time_end."' WHERE id='".$work_id."' ";
+
+        $results = dbQuery($sql);
+
+        $sql1 = "DELETE FROM work_head WHERE work_id='".$work_id."' ";
+        $results1 = dbQuery($sql1);
+
+        $sql2 = "INSERT INTO work_head SET work_id='".$work_id."',txt='หัวข้อเรื่อง',txt_val='".$txt_val."' ";
+        $results2 = dbQuery($sql2);
+        
+    }
+
+    function edit_work_06($work_id,$sheet_id,$advisor_id,$grp_id,$date,$time_begin,$time_end,$txt_val){
+        $sql = "UPDATE work SET sheet_id='".$sheet_id."',advisor_id='".$advisor_id."',grp_id='".$grp_id."',date='".$date."'
+                ,time_begin='".$time_begin."',time_end='".$time_end."' WHERE id='".$work_id."' ";
+
+        $results = dbQuery($sql);
+        
+        $sql1 = "DELETE FROM work_head WHERE work_id='".$work_id."' ";
+        $results1 = dbQuery($sql1);
+        
+        $sql2 = "INSERT INTO work_head SET work_id='".$work_id."',txt='หัวข้อเรื่อง',txt_val='".$txt_val."' ";
+        $results2 = dbQuery($sql2);
+        
+    }
+
+    function edit_work_07($work_id,$sheet_id,$advisor_id,$grp_id,$date,$time_begin,$time_end){
+        $sql = "UPDATE work SET sheet_id='".$sheet_id."',advisor_id='".$advisor_id."',grp_id='".$grp_id."',date='".$date."'
+                ,time_begin='".$time_begin."',time_end='".$time_end."' WHERE id='".$work_id."' ";
+
+        $results = dbQuery($sql);
+        
+    }
+
 
 ?>

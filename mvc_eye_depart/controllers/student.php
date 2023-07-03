@@ -20,8 +20,8 @@
 
     function get_student_advisor(){
         $sql = "SELECT concat(trim(ttl),trim(name),' ',trim(lname)) as name,id 
-                FROM advisor 
-                ORDER BY adv_id ";
+        FROM advisor 
+        ORDER BY adv_id ";
         $results = dbQuery($sql);
         $rows = array();
 
