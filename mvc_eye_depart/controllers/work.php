@@ -107,8 +107,8 @@
         echo json_encode($rows);
     }
 
-    function add_work_01($sheet_id,$advisor_id,$grp_id,$date,$time_begin,$time_end,$student_id,$caption,$txt,$txt1,$txt_val1,$txt2,$txt_val2,$txt3,$txt_val3,$txt5,$txt_val5,$txt6,$txt_val6,$txt7,$txt_val7,$txt_val6_1,$txt_val7_1){
-        $sql = "INSERT INTO work SET sheet_id='".$sheet_id."',advisor_id='".$advisor_id."',grp_id='".$grp_id."',date='".$date."'
+    function add_work_01($sheet_id,$advisor_id,$date,$time_begin,$time_end,$student_id,$caption,$txt,$txt1,$txt_val1,$txt2,$txt_val2,$txt3,$txt_val3,$txt5,$txt_val5,$txt6,$txt_val6,$txt7,$txt_val7,$txt_val6_1,$txt_val7_1){
+        $sql = "INSERT INTO work SET sheet_id='".$sheet_id."',advisor_id='".$advisor_id."',date='".$date."'
                 ,time_begin='".$time_begin."',time_end='".$time_end."',student_id='".$student_id."' ";
 
         $results = dbQuery($sql);
@@ -158,7 +158,7 @@
         $results11 = dbQuery($sql11);
         $row = dbFetchAssoc($results11);
         $rows = dbNumRows($results11);
-        if $rows > 0 {
+        if ($rows > 0) {
             $work_detail_id = $row['id'];
         }else{
             $sql12 = "INSERT INTO work_detail SET work_id='".$work_id."',student_id='".$student_id."',d_update=curdate() ";
@@ -170,7 +170,7 @@
         }
         
         /*  เกิน 3 วันไม่ได้คะแนน  */ 
-        if(date('Y-M-d',strtotime($txt_val7_1))-date('Y-M-d',strtotime($txt_val6_1))) > 3 {
+        if(date('Y-M-d',strtotime($txt_val7_1))-date('Y-M-d',strtotime($txt_val6_1)) > 3) {
             $sql14 = "INSERT INTO work_score SET work_detail_id='".$work_detail_id."',score=0 ";
             $results14 = dbQuery($sql12);
         } else {
@@ -244,8 +244,8 @@
         
     }
 
-    function edit_work_01($work_id,$sheet_id,$advisor_id,$grp_id,$date,$time_begin,$time_end,$student_id,$caption,$txt,$txt1,$txt_val1,$txt2,$txt_val2,$txt3,$txt_val3,$txt5,$txt_val5,$txt6,$txt_val6,$txt7,$txt_val7,$txt_val6_1,$txt_val7_1){
-        $sql = "UPDATE work SET sheet_id='".$sheet_id."',advisor_id='".$advisor_id."',grp_id='".$grp_id."',date='".$date."'
+    function edit_work_01($work_id,$sheet_id,$advisor_id,$date,$time_begin,$time_end,$student_id,$caption,$txt,$txt1,$txt_val1,$txt2,$txt_val2,$txt3,$txt_val3,$txt5,$txt_val5,$txt6,$txt_val6,$txt7,$txt_val7,$txt_val6_1,$txt_val7_1){
+        $sql = "UPDATE work SET sheet_id='".$sheet_id."',advisor_id='".$advisor_id."',date='".$date."'
                 ,time_begin='".$time_begin."',time_end='".$time_end."',student_id='".$student_id."' WHERE id='".$work_id."' ";
 
         $results = dbQuery($sql);
@@ -293,7 +293,7 @@
         $results11 = dbQuery($sql11);
         $row = dbFetchAssoc($results11);
         $rows = dbNumRows($results11);
-        if $rows > 0 {
+        if ($rows > 0) {
             $work_detail_id = $row['id'];
         }else{
             $sql12 = "INSERT INTO work_detail SET work_id='".$work_id."',student_id='".$student_id."',d_update=curdate() ";
@@ -305,7 +305,7 @@
         }
         
         /*  เกิน 3 วันไม่ได้คะแนน  */ 
-        if(date('Y-M-d',strtotime($txt_val7_1))-date('Y-M-d',strtotime($txt_val6_1))) > 3 {
+        if(date('Y-M-d',strtotime($txt_val7_1))-date('Y-M-d',strtotime($txt_val6_1)) > 3) {
             $sql14 = "UPDATE work_score SET score=0 WHERE work_detail_id='".$work_detail_id."' AND sheet_detail_id=0 ";
             $results14 = dbQuery($sql12);
         } else {
@@ -383,6 +383,51 @@
         $results = dbQuery($sql);
         
     }
+
+    function get_work_head($work_id){
+        
+        $sql = "SELECT * FROM work_head WHERE work_id='".$work_id."' ";
+
+        $results = dbQuery($sql);
+
+        $rows = array();
+
+        while($row = dbFetchAssoc($results)) {
+            $rows[] = $row;
+        }
+        echo json_encode($rows);
+    }
+
+    function get_work_student(){
+        
+        $sql = "SELECT id,ttl,name,lname FROM student WHERE stop!='0000-00-00' ";
+
+        $results = dbQuery($sql);
+
+        $rows = array();
+
+        while($row = dbFetchAssoc($results)) {
+            $rows[] = $row;
+        }
+        echo json_encode($rows);
+    }
+
+    // function chk_work($word_id){
+        
+    //     $sql = "SELECT t1.id,t2.id as work_detail_id,t3.id as work_score_id FROM work as t1
+    //             LEFT JOIN work_detail as t2 on t1.id=t2.work_id
+    //             LEFT JOIN work_score as t3 on t2.id=t3.work_detail_id
+    //              WHERE t1.id='".$word_id."' ";
+
+    //     $results = dbQuery($sql);
+
+    //     $rows = array();
+
+    //     while($row = dbFetchAssoc($results)) {
+    //         $rows[] = $row;
+    //     }
+    //     echo json_encode($rows);
+    // }
 
 
 ?>

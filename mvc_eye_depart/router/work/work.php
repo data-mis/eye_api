@@ -179,7 +179,7 @@
                 $sheet_code = $data->sheet_code;
                     switch ($sheet_code) {
                         case "01": // ประเมินรายงาน
-                            $word_id = $data->word_id;
+                            $work_id = $data->work_id;
                             $sheet_id = $data->sheet_id;
                             $advisor_id = $data->advisor_id;
                             $student_id = $data->student_id;
@@ -202,40 +202,40 @@
                             $txt_val7 = $data->txt_val7;   /* container1.dbx3.txtentry.Value */
                             $txt_val6_1 = $data->txt_val6_1;   /* container1.dbx2.txtdate.Value */
                             $txt_val7_1 = $data->txt_val7_1;   /* container1.dbx3.txtdate.Value */
-                            edit_work_01($word_id,$sheet_id,$advisor_id,$student_id,$date,$time_begin,$time_end,$caption,$txt,$txt1,$txt_val1,$txt2,$txt_val2,$txt3,$txt_val3,$txt5,$txt_val5,$txt6,$txt_val6,$txt7,$txt_val7,$txt_val6_1,$txt_val7_1);
+                            edit_work_01($work_id,$sheet_id,$advisor_id,$student_id,$date,$time_begin,$time_end,$caption,$txt,$txt1,$txt_val1,$txt2,$txt_val2,$txt3,$txt_val3,$txt5,$txt_val5,$txt6,$txt_val6,$txt7,$txt_val7,$txt_val6_1,$txt_val7_1);
                             break;
                         case "02": // แบบฟอร์ม progress note
-                            $word_id = $data->word_id;
+                            $work_id = $data->work_id;
                             $sheet_id = $data->sheet_id;
                             $advisor_id = $data->advisor_id;
                             $student_id = $data->student_id;
                             $date = $data->date;
                             $time_begin = $data->time_begin;
                             $time_end = $data->time_end;
-                            edit_work_02($word_id,$sheet_id,$advisor_id,$student_id,$date,$time_begin,$time_end);
+                            edit_work_02($work_id,$sheet_id,$advisor_id,$student_id,$date,$time_begin,$time_end);
                             break;
                         case "03": // OPD teaching
-                            $word_id = $data->word_id;
+                            $work_id = $data->work_id;
                             $sheet_id = $data->sheet_id;
                             $advisor_id = $data->advisor_id;
                             $grp_id = $data->grp_id;
                             $date = $data->date;
                             $time_begin = $data->time_begin;
                             $time_end = $data->time_end;
-                            edit_work_03($word_id,$sheet_id,$advisor_id,$grp_id,$date,$time_begin,$time_end);
+                            edit_work_03($work_id,$sheet_id,$advisor_id,$grp_id,$date,$time_begin,$time_end);
                             break;
                         case "04": // Ward round
-                            $word_id = $data->word_id;
+                            $work_id = $data->work_id;
                             $sheet_id = $data->sheet_id;
                             $advisor_id = $data->advisor_id;
                             $grp_id = $data->grp_id;
                             $date = $data->date;
                             $time_begin = $data->time_begin;
                             $time_end = $data->time_end;
-                            edit_work_04($word_id,$sheet_id,$advisor_id,$grp_id,$date,$time_begin,$time_end);
+                            edit_work_04($work_id,$sheet_id,$advisor_id,$grp_id,$date,$time_begin,$time_end);
                             break;
                         case "05": // Case & Topic ผู้นำเสนอ
-                            $word_id = $data->word_id;
+                            $work_id = $data->work_id;
                             $sheet_id = $data->sheet_id;
                             $advisor_id = $data->advisor_id;
                             $grp_id = $data->grp_id;
@@ -243,10 +243,10 @@
                             $time_begin = $data->time_begin;
                             $time_end = $data->time_end;
                             $txt_val = $data->txt_val;
-                            edit_work_05($word_id,$sheet_id,$advisor_id,$grp_id,$date,$time_begin,$time_end,$txt_val);
+                            edit_work_05($work_id,$sheet_id,$advisor_id,$grp_id,$date,$time_begin,$time_end,$txt_val);
                             break;
                         case "06": // Case & Topic ผู้ร่วม
-                            $word_id = $data->word_id;
+                            $work_id = $data->work_id;
                             $sheet_id = $data->sheet_id;
                             $advisor_id = $data->advisor_id;
                             $grp_id = $data->grp_id;
@@ -254,17 +254,17 @@
                             $time_begin = $data->time_begin;
                             $time_end = $data->time_end;
                             $txt_val = $data->txt_val;
-                            edit_work_06($word_id,$sheet_id,$advisor_id,$grp_id,$date,$time_begin,$time_end,$txt_val);
+                            edit_work_06($work_id,$sheet_id,$advisor_id,$grp_id,$date,$time_begin,$time_end,$txt_val);
                             break; 
                         case "07": // Flipped classroom
-                            $word_id = $data->word_id;
+                            $work_id = $data->work_id;
                             $sheet_id = $data->sheet_id;
                             $advisor_id = $data->advisor_id;
                             $grp_id = $data->grp_id;
                             $date = $data->date;
                             $time_begin = $data->time_begin;
                             $time_end = $data->time_end;
-                            edit_work_07($word_id,$sheet_id,$advisor_id,$grp_id,$date,$time_begin,$time_end);
+                            edit_work_07($work_id,$sheet_id,$advisor_id,$grp_id,$date,$time_begin,$time_end);
                             break;             
                     }
             }else{
@@ -274,4 +274,54 @@
             echo json_encode(array('error' => 'Invalid Method'.' '.$_SERVER['REQUEST_METHOD'],'status' => FALSE)); 
         }
     });
+
+    router::set('work/get_work_head',function(){
+        require_once('./controllers/work.php');
+        $bearer_token = get_bearer_token();
+        $is_jwt_valid = is_jwt_valid($bearer_token);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if($is_jwt_valid) {
+                $data = json_decode(file_get_contents("php://input",true));
+                $work_id = $data->work_id;
+                get_work_head($work_id);
+            }else{
+                echo json_encode(array('error' => 'Access denied','status' => FALSE));
+            }
+        }else{
+            echo json_encode(array('error' => 'Invalid Method'.' '.$_SERVER['REQUEST_METHOD'],'status' => FALSE)); 
+        }
+    });
+
+    router::set('work/get_work_student',function(){
+        require_once('./controllers/work.php');
+        $bearer_token = get_bearer_token();
+        $is_jwt_valid = is_jwt_valid($bearer_token);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if($is_jwt_valid) {
+                $data = json_decode(file_get_contents("php://input",true));
+                get_work_student();
+            }else{
+                echo json_encode(array('error' => 'Access denied','status' => FALSE));
+            }
+        }else{
+            echo json_encode(array('error' => 'Invalid Method'.' '.$_SERVER['REQUEST_METHOD'],'status' => FALSE)); 
+        }
+    });
+    
+    // router::set('work/chk_work',function(){
+    //     require_once('./controllers/work.php');
+    //     $bearer_token = get_bearer_token();
+    //     $is_jwt_valid = is_jwt_valid($bearer_token);
+    //     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    //         if($is_jwt_valid) {
+    //             $data = json_decode(file_get_contents("php://input",true));
+    //             $word_id = $data->word_id;
+    //             chk_work($word_id);
+    //         }else{
+    //             echo json_encode(array('error' => 'Access denied','status' => FALSE));
+    //         }
+    //     }else{
+    //         echo json_encode(array('error' => 'Invalid Method'.' '.$_SERVER['REQUEST_METHOD'],'status' => FALSE)); 
+    //     }
+    // });
 ?>
