@@ -412,6 +412,20 @@
         echo json_encode($rows);
     }
 
+    function get_work_tbllu($title){
+        
+        $sql = "SELECT * FROM tbllu WHERE title='".$title."' ";
+
+        $results = dbQuery($sql);
+
+        $rows = array();
+
+        while($row = dbFetchAssoc($results)) {
+            $rows[] = $row;
+        }
+        echo json_encode($rows);
+    }
+
     // function chk_work($word_id){
         
     //     $sql = "SELECT t1.id,t2.id as work_detail_id,t3.id as work_score_id FROM work as t1

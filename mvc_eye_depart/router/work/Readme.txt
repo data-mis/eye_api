@@ -486,7 +486,9 @@
 
 ********  รูปแบบการส่งดึงข้อมูล  นักศึกษา stop != '00000000'  **********
 ตัวอย่าง ส่งเลข token 
-
+    {
+        "work_id" : "91"
+    }
     ** Bearer Token **
     eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Inp6IiwiZXhwIjoxNjg2NjIxNjA5fQ.WDqmDqUD1If6PCkLucp_0oJDQ21Nc5te3EngU_o0OtI
 
@@ -509,6 +511,40 @@
             "ttl": "นางสาว",
             "name": "ชลิดา",
             "lname": "นนทสูติ"
+        }
+    ]"
+#--------------------------------------------------------------------------------------------------------------------------------------------------#
+
+#---------------------------------------------------   function [ work/get_work_tbllu ]   ---------------------------------------------------# 
+เป็น function ดึงข้อมูล tbllu
+
+********  รูปแบบการส่งดึงข้อมูล  นักศึกษา stop != '00000000'  **********
+ตัวอย่าง ส่งเลข token 
+    {
+        "work_id" : "91"
+    }
+    ** Bearer Token **
+    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Inp6IiwiZXhwIjoxNjg2NjIxNjA5fQ.WDqmDqUD1If6PCkLucp_0oJDQ21Nc5te3EngU_o0OtI
+
+*--------- results ---------*
+    "[
+        {
+            "Id": "9",
+            "title": "case_topic",
+            "code": "1",
+            "name": "Red eye (infectious keratitis)"
+        },
+        {
+            "Id": "10",
+            "title": "case_topic",
+            "code": "2",
+            "name": "Glaucoma"
+        },
+        {
+            "Id": "11",
+            "title": "case_topic",
+            "code": "3",
+            "name": "Refractive error"
         }
     ]"
 #--------------------------------------------------------------------------------------------------------------------------------------------------#

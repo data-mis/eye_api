@@ -307,6 +307,23 @@
             echo json_encode(array('error' => 'Invalid Method'.' '.$_SERVER['REQUEST_METHOD'],'status' => FALSE)); 
         }
     });
+
+    router::set('work/get_work_tbllu',function(){
+        require_once('./controllers/work.php');
+        $bearer_token = get_bearer_token();
+        $is_jwt_valid = is_jwt_valid($bearer_token);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if($is_jwt_valid) {
+                $data = json_decode(file_get_contents("php://input",true));
+                $title = $data->title;
+                get_work_tbllu($title);
+            }else{
+                echo json_encode(array('error' => 'Access denied','status' => FALSE));
+            }
+        }else{
+            echo json_encode(array('error' => 'Invalid Method'.' '.$_SERVER['REQUEST_METHOD'],'status' => FALSE)); 
+        }
+    });
     
     // router::set('work/chk_work',function(){
     //     require_once('./controllers/work.php');
