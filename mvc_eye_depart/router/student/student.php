@@ -221,7 +221,7 @@
                     $structure = "./images/student/".$folder;
                     $images = glob("./images/student/".$folder."/*.*");
                     $ext = $structure."/".$std_id;
-                    $test = "/images/61/610710001.jpg";
+                    $image_user = "/images/user.png";
                     if(!empty($std_id)){
                         if(is_dir($structure)){
                             for ($i = 0; $i<count($images); $i++) {
@@ -233,7 +233,7 @@
                               }
                         }else{
                             //echo json_encode(array('error' => 'Failed to directories '.$structure,'status' => FALSE));
-                            echo json_encode(array('url' => $_SERVER['SERVER_NAME'].dirname($_SERVER['PHP_SELF']).$test,'status' => FALSE));
+                            echo json_encode(array('url' => $_SERVER['SERVER_NAME'].dirname($_SERVER['PHP_SELF']).$image_user,'status' => FALSE));
                         }
                     }else{
                         echo json_encode(array('error' => 'No Data','status' => FALSE));

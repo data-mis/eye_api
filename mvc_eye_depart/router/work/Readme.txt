@@ -548,3 +548,102 @@
         }
     ]"
 #--------------------------------------------------------------------------------------------------------------------------------------------------#
+
+#---------------------------------------------------   function [ work/upload_image_student_file ]   ---------------------------------------------------# 
+เป็น function อัพโหลดไฟล์นักศึกษา  
+
+********  รูปแบบการส่งอัพโหลดไฟล์นักศึกษา  **********
+ตัวอย่าง การส่งไฟล์ POST เข้ามาใน  From  (ต้องส่งเลข token มาด้วย)
+    
+    <form action="#.php" method="post" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <input type="hidden" name="work_id" value='108'>
+        <input type="hidden" name="work_date" value='2022-12-01'>
+        <input type="hidden" name="student_id" value='0'>
+        <input type="hidden" name="grp_id" value='3'>
+    </form>
+    
+    ** Bearer Token **
+    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Inp6IiwiZXhwIjoxNjg2NjIxNjA5fQ.WDqmDqUD1If6PCkLucp_0oJDQ21Nc5te3EngU_o0OtI
+
+*--------- results ---------*
+    {
+    "success": "You upload image student filr ./images/2022/108/108_2023070612_15_07.pdf successfully",
+    "status": true
+    }
+#--------------------------------------------------------------------------------------------------------------------------------------------------#
+
+#---------------------------------------------------   function [ work/get_image_student_file ]   ---------------------------------------------------# 
+เป็น function ค้นหาไฟล์นักศึกษา
+
+********  รูปแบบการส่งค้นหาไฟล์นักศึกษา  **********
+ตัวอย่าง การส่งไฟล์ json  (ต้องส่งเลข token มาด้วย)
+    {
+        "work_id" : "108",
+        "work_date" : "2022-12-01",
+        "file_name" : "108_2023070612_15_07.pdf"
+    }
+    
+    ** Bearer Token **
+    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Inp6IiwiZXhwIjoxNjg2NjIxNjA5fQ.WDqmDqUD1If6PCkLucp_0oJDQ21Nc5te3EngU_o0OtI
+
+*--------- results ---------*
+    {
+    "url": "11.0.0.106/pro_web/eye_api/mvc_eye_depart./images/2022/108/108_2023070612_15_07.pdf",
+    "status": true
+    }
+#--------------------------------------------------------------------------------------------------------------------------------------------------#
+
+#---------------------------------------------------   function [ work/get_student_file ]   ---------------------------------------------------# 
+เป็น function ค้นหาไฟล์ 
+
+********  รูปแบบการส่งค้นหารูปนักศึกษา  **********
+ตัวอย่าง การส่งไฟล์ json  (ต้องส่งเลข token มาด้วย)
+    {
+        "work_id" : "108"
+    }
+    
+    ** Bearer Token **
+    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Inp6IiwiZXhwIjoxNjg2NjIxNjA5fQ.WDqmDqUD1If6PCkLucp_0oJDQ21Nc5te3EngU_o0OtI
+
+*--------- results ---------*
+    {
+        "Id": "14",
+        "student_id": "0",
+        "grp_id": "2",
+        "work_id": "108",
+        "date": "2023-07-06",
+        "file_name": "108_2023070607_01_40.pdf",
+        "file_real": "56.pdf",
+        "work_date": "2022-12-01"
+    },
+    {
+        "Id": "15",
+        "student_id": "0",
+        "grp_id": "2",
+        "work_id": "108",
+        "date": "2023-07-06",
+        "file_name": "108_2023070607_03_48.pdf",
+        "file_real": "51.pdf",
+        "work_date": "2022-12-01"
+    }
+#--------------------------------------------------------------------------------------------------------------------------------------------------#
+
+#---------------------------------------------------   function [ work/delete_student_file ]   ---------------------------------------------------# 
+เป็น function ลบไฟล์นักศึกษา
+
+********  รูปแบบการส่งลบไฟล์นักศึกษา  **********
+ตัวอย่าง การส่งไฟล์ json  (ต้องส่งเลข token มาด้วย)
+    {
+        "id" : "16"
+    }
+    
+    ** Bearer Token **
+    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Inp6IiwiZXhwIjoxNjg2NjIxNjA5fQ.WDqmDqUD1If6PCkLucp_0oJDQ21Nc5te3EngU_o0OtI
+
+*--------- results ---------*
+    {
+    "success": "You delete student_file successfully",
+    "status": true
+    }
+#--------------------------------------------------------------------------------------------------------------------------------------------------#

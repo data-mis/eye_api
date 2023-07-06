@@ -1,5 +1,5 @@
 <?php
-
+date_default_timezone_set("Asia/Bangkok");
 // require_once('routes.php');
 require_once('./router/login/login.php');
 require_once('./router/user/user.php');
@@ -7,6 +7,7 @@ require_once('./router/student/student.php');
 require_once('./router/teacher/teacher.php');
 require_once('./router/group/group.php');
 require_once('./router/work/work.php');
+require_once('./router/sheet/sheet.php');
 
 /* function เช็คการเรียกใช้ class */
     function __autoload($class_name) {

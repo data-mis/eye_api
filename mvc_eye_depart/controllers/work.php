@@ -426,22 +426,87 @@
         echo json_encode($rows);
     }
 
-    // function chk_work($word_id){
+    function ck_get_work($work_id){
         
-    //     $sql = "SELECT t1.id,t2.id as work_detail_id,t3.id as work_score_id FROM work as t1
-    //             LEFT JOIN work_detail as t2 on t1.id=t2.work_id
-    //             LEFT JOIN work_score as t3 on t2.id=t3.work_detail_id
-    //              WHERE t1.id='".$word_id."' ";
+        $sql = "SELECT t1.id,t2.id as work_detail_id,t3.id as work_score_id FROM work as t1
+                LEFT JOIN work_detail as t2 on t1.id=t2.work_id
+                LEFT JOIN work_score as t3 on t2.id=t3.work_detail_id
+                 WHERE t1.id='".$work_id."' ";
 
-    //     $results = dbQuery($sql);
+        $results = dbQuery($sql);
+        $row = dbFetchAssoc($results);
+        //echo $row['work_detail_id'];
+        // $rows = array();
 
-    //     $rows = array();
+        // while($row = dbFetchAssoc($results)) {
+        //     $rows[] = $row;
+        // }
+        if (!is_null($row['work_detail_id'])) {
+            echo json_encode(array('work_id' => $work_id,'status' => 1));
+        }else{
+            echo json_encode(array('work_id' => $work_id,'status' => 0));
+        }
+        
+    }
 
-    //     while($row = dbFetchAssoc($results)) {
-    //         $rows[] = $row;
-    //     }
-    //     echo json_encode($rows);
-    // }
+    function delete_work($work_id){
+        
+        $sql = "SELECT t1.id,t2.id as work_detail_id,t3.id as work_score_id FROM work as t1
+                LEFT JOIN work_detail as t2 on t1.id=t2.work_id
+                LEFT JOIN work_score as t3 on t2.id=t3.work_detail_id
+                 WHERE t1.id='".$work_id."' ";
+
+        $results = dbQuery($sql);
+
+        while($row = dbFetchAssoc($results)) {
+            if (!is_null($row['work_score_id'])) {
+                $sql2 = "DELETE FROM work_score WHERE id='".$row['work_score_id']."'";
+                $results2 = dbQuery($sql2);
+            }
+            if (!is_null($row['work_detail_id'])) {
+                $sql3 = "DELETE FROM work_detail  WHERE id='".$row['work_detail_id']."'";
+                $results3 = dbQuery($sql3);
+            }
+            $sql4 = "DELETE FROM work_head WHERE work_id='".$row['id']."'";
+                $results4 = dbQuery($sql4);
+            $sql5 = "DELETE FROM work WHERE id='".$row['id']."'";
+                $results5 = dbQuery($sql5);
+        }
+        
+    }
+
+    function delete_student_file($id){
+        
+        $sql = "DELETE FROM student_file WHERE id='".$id."'";
+
+        $results = dbQuery($sql);
+
+        if (!$results) {
+            echo json_encode(array('success' => 'You delete student_file successfully','status' => TRUE));
+        }else{
+            echo json_encode(array('error' => 'You delete student_file successfully','status' => FALSE));
+        }
+        
+    }
+
+    function get_student_file($work_id){
+        
+        $sql = "SELECT t1.*,t2.date as work_date FROM student_file as t1
+                LEFT JOIN work as t2 on t1.work_id=t2.id
+                WHERE t1.work_id='".$work_id."' ";
+
+        $results = dbQuery($sql);
+
+        $rows = array();
+
+        while($row = dbFetchAssoc($results)) {
+            $rows[] = $row;
+        }
+        echo json_encode($rows);
+        
+    }
+
+    
 
 
 ?>

@@ -1,5 +1,5 @@
 <?php
-
+    // date_default_timezone_set("Asia/Bangkok");
     /*  controllers/work  */
     router::set('work/get_sheet',function(){
         require_once('./controllers/work.php');
@@ -325,20 +325,176 @@
         }
     });
     
-    // router::set('work/chk_work',function(){
-    //     require_once('./controllers/work.php');
-    //     $bearer_token = get_bearer_token();
-    //     $is_jwt_valid = is_jwt_valid($bearer_token);
-    //     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    //         if($is_jwt_valid) {
-    //             $data = json_decode(file_get_contents("php://input",true));
-    //             $word_id = $data->word_id;
-    //             chk_work($word_id);
-    //         }else{
-    //             echo json_encode(array('error' => 'Access denied','status' => FALSE));
-    //         }
-    //     }else{
-    //         echo json_encode(array('error' => 'Invalid Method'.' '.$_SERVER['REQUEST_METHOD'],'status' => FALSE)); 
-    //     }
-    // });
+    router::set('work/ck_get_work',function(){
+        require_once('./controllers/work.php');
+        $bearer_token = get_bearer_token();
+        $is_jwt_valid = is_jwt_valid($bearer_token);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if($is_jwt_valid) {
+                $data = json_decode(file_get_contents("php://input",true));
+                $work_id = $data->work_id;
+                ck_get_work($work_id);
+            }else{
+                echo json_encode(array('error' => 'Access denied','status' => FALSE));
+            }
+        }else{
+            echo json_encode(array('error' => 'Invalid Method'.' '.$_SERVER['REQUEST_METHOD'],'status' => FALSE)); 
+        }
+    });
+
+    router::set('work/delete_work',function(){
+        require_once('./controllers/work.php');
+        $bearer_token = get_bearer_token();
+        $is_jwt_valid = is_jwt_valid($bearer_token);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if($is_jwt_valid) {
+                $data = json_decode(file_get_contents("php://input",true));
+                $work_id = $data->work_id;
+                delete_work($work_id);
+            }else{
+                echo json_encode(array('error' => 'Access denied','status' => FALSE));
+            }
+        }else{
+            echo json_encode(array('error' => 'Invalid Method'.' '.$_SERVER['REQUEST_METHOD'],'status' => FALSE)); 
+        }
+    });
+
+     /* load images file */
+    router::set('work/get_image_student_file',function(){
+        //require_once('./controllers/work.php');
+        $bearer_token = get_bearer_token();
+        $is_jwt_valid = is_jwt_valid($bearer_token);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if($is_jwt_valid) {
+                $data = json_decode(file_get_contents("php://input",true));
+                $work_id = $data->work_id;
+                $work_date = $data->work_date;
+                $file_name = $data->file_name;
+                $folder = substr($work_date,0,4);
+                $structure = "./images/".$folder."/".$work_id;
+                $images = glob("./images/".$folder."/".$work_id."/*.*");
+                $ext = "./images/".$folder."/".$work_id."/".$file_name;
+                //$image_user = "/images/user.png";
+                if(!empty($work_id)){
+                    if(is_dir($structure)){
+                        for ($i = 0; $i<count($images); $i++) {
+                            $img = $images[$i];
+                            if ($img === $ext) {
+                                echo json_encode(array('url' => $_SERVER['SERVER_NAME'].dirname($_SERVER['PHP_SELF']).$images[$i],'status' => TRUE));
+                              break;
+                            }
+                          }
+                    }else{
+                        echo json_encode(array('error' => 'Failed to directories '.$structure,'status' => FALSE));
+                        // echo json_encode(array('url' => $_SERVER['SERVER_NAME'].dirname($_SERVER['PHP_SELF']).$image_user,'status' => FALSE));
+                    }
+                }else{
+                    echo json_encode(array('error' => 'No Data','status' => FALSE));
+                }
+            }else{
+                echo json_encode(array('error' => 'No Data','status' => FALSE));
+            }
+        }else{
+            echo json_encode(array('error' => 'Invalid Method'.' '.$_SERVER['REQUEST_METHOD'],'status' => FALSE)); 
+        }
+    });
+
+    /* Upload images file */
+    router::set('work/upload_image_student_file',function(){
+        //require_once('./controllers/work.php');
+        $bearer_token = get_bearer_token();
+        $is_jwt_valid = is_jwt_valid($bearer_token);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if($is_jwt_valid) {
+                //$data = json_decode(file_get_contents("php://input",true));
+                $work_id = $_POST['work_id'];
+                $work_date = $_POST['work_date'];
+                $student_id = $_POST['student_id'];
+                $grp_id = $_POST['grp_id'];
+                $file_real = $_FILES['file']['name'];
+                $file_name = $work_id."_".date('Ymd').date('H_i_s').strrchr( $_FILES['file']['name'] , '.' );
+                $tmp_name =  $_FILES['file']['tmp_name'];
+                $folder = substr($work_date,0,4)."/".$work_id;
+                $structure = "./images/".$folder;
+                if(!empty($work_id)){
+                    if ( !!$_FILES['file']['tmp_name'] ){
+                        if(is_dir($structure)){
+                                $results = move_uploaded_file($tmp_name,$structure."/".$file_name);
+                                if($results) {
+                                    $sql1 = "INSERT INTO student_file SET student_id='".$student_id."',grp_id='".$grp_id."',work_id='".$work_id."',date=curdate(),file_name='".$file_name."',file_real='".$file_real."' ";
+                                    $result1 = dbQuery($sql1);
+                                    if($result1) {
+                                        echo json_encode(array('success' => 'You upload image student file '.$structure.'/'.$file_name.' successfully','status' => TRUE));
+                                    }else{
+                                        echo json_encode(array('error' => 'You INSERT INTO student_file  unsuccessful','status' => FALSE));
+                                    }
+                                } else {
+                                    echo json_encode(array('error' => 'You upload image student file '.$structure.'/'.$file_name.' unsuccessful','status' => FALSE));
+                                }
+                        }else{
+                            if (!mkdir($structure, 0777, true)) {
+                                echo json_encode(array('error' => 'Failed to create directories '.$structure,'status' => FALSE));
+                            }else{
+                                    $results = move_uploaded_file($tmp_name,$structure."/".$file_name);
+                                    if($results) {
+                                        $sql1 = "INSERT INTO student_file SET student_id='".$student_id."',grp_id='".$grp_id."',work_id='".$work_id."',date=curdate(),file_name='".$file_name."',file_real='".$file_real."' ";
+                                        $result1 = dbQuery($sql1);
+                                        if($result1) {
+                                            echo json_encode(array('success' => 'You upload image student file '.$structure.'/'.$file_name.' successfully','status' => TRUE));
+                                        }else{
+                                            echo json_encode(array('error' => 'You INSERT INTO student_file  unsuccessful','status' => FALSE));
+                                        }
+                                    } else {
+                                        echo json_encode(array('error' => 'You upload image student '.$structure.'/'.$file_name.' unsuccessful','status' => FALSE));
+                                    }
+                            }
+                        }
+                    }else{
+                        echo json_encode(array('error' => 'Access denied because tmp_name null','status' => FALSE));
+                    }
+                }else{
+                    echo json_encode(array('error' => 'Access denied because std_id null','status' => FALSE));
+                }
+            }else{
+                echo json_encode(array('error' => 'Access denied','status' => FALSE));
+            }
+        }else{
+            echo json_encode(array('error' => 'Invalid Method'.' '.$_SERVER['REQUEST_METHOD'],'status' => FALSE)); 
+        }
+    });
+
+    router::set('work/delete_student_file',function(){
+        require_once('./controllers/work.php');
+        $bearer_token = get_bearer_token();
+        $is_jwt_valid = is_jwt_valid($bearer_token);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if($is_jwt_valid) {
+                $data = json_decode(file_get_contents("php://input",true));
+                $id = $data->id;
+                delete_student_file($id);
+            }else{
+                echo json_encode(array('error' => 'Access denied','status' => FALSE));
+            }
+        }else{
+            echo json_encode(array('error' => 'Invalid Method'.' '.$_SERVER['REQUEST_METHOD'],'status' => FALSE)); 
+        }
+    });
+
+    router::set('work/get_student_file',function(){
+        require_once('./controllers/work.php');
+        $bearer_token = get_bearer_token();
+        $is_jwt_valid = is_jwt_valid($bearer_token);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if($is_jwt_valid) {
+                $data = json_decode(file_get_contents("php://input",true));
+                $work_id = $data->work_id;
+                get_student_file($work_id);
+            }else{
+                echo json_encode(array('error' => 'Access denied','status' => FALSE));
+            }
+        }else{
+            echo json_encode(array('error' => 'Invalid Method'.' '.$_SERVER['REQUEST_METHOD'],'status' => FALSE)); 
+        }
+    });
+/*                                                                                                                                                                */
 ?>
