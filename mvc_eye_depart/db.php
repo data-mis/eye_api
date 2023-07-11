@@ -32,6 +32,6 @@
     }
     
     function closeConn() {
-        mysqli_close($dbConn);
+        mysqli_close($conn);
     }
 ?>
