@@ -106,8 +106,9 @@
         }
         echo json_encode($rows);
     }
-
-    function add_work_01($sheet_id,$advisor_id,$date,$time_begin,$time_end,$student_id,$caption,$txt,$txt1,$txt_val1,$txt2,$txt_val2,$txt3,$txt_val3,$txt5,$txt_val5,$txt6,$txt_val6,$txt7,$txt_val7,$txt_val6_1,$txt_val7_1){
+                         
+    function add_work_01($sheet_id,$advisor_id,$student_id,$date,$time_begin,$time_end,$caption,$txt,$txt1,$txt_val1,$txt2,$txt_val2,$txt3,$txt_val3,$txt5,$txt_val5,$txt6,$txt_val6,$txt7,$txt_val7,$txt_val6_1,$txt_val7_1){
+        
         $sql = "INSERT INTO work SET sheet_id='".$sheet_id."',advisor_id='".$advisor_id."',date='".$date."'
                 ,time_begin='".$time_begin."',time_end='".$time_end."',student_id='".$student_id."' ";
 
@@ -179,7 +180,7 @@
         }
          
     }
-    
+
     function add_work_02($sheet_id,$advisor_id,$student_id,$date,$time_begin,$time_end){
         $sql = "INSERT INTO work SET sheet_id='".$sheet_id."',advisor_id='".$advisor_id."',student_id='".$student_id."',date='".$date."'
                 ,time_begin='".$time_begin."',time_end='".$time_end."' ";
@@ -243,8 +244,8 @@
         $results = dbQuery($sql);
         
     }
-
-    function edit_work_01($work_id,$sheet_id,$advisor_id,$date,$time_begin,$time_end,$student_id,$caption,$txt,$txt1,$txt_val1,$txt2,$txt_val2,$txt3,$txt_val3,$txt5,$txt_val5,$txt6,$txt_val6,$txt7,$txt_val7,$txt_val6_1,$txt_val7_1){
+                
+    function edit_work_01($work_id,$sheet_id,$advisor_id,$student_id,$date,$time_begin,$time_end,$caption,$txt,$txt1,$txt_val1,$txt2,$txt_val2,$txt3,$txt_val3,$txt5,$txt_val5,$txt6,$txt_val6,$txt7,$txt_val7,$txt_val6_1,$txt_val7_1){
         $sql = "UPDATE work SET sheet_id='".$sheet_id."',advisor_id='".$advisor_id."',date='".$date."'
                 ,time_begin='".$time_begin."',time_end='".$time_end."',student_id='".$student_id."' WHERE id='".$work_id."' ";
 
