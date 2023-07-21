@@ -122,12 +122,16 @@
         switch ($txt) {
             case 1:
                 $txt_val = 'จักษุ(ช)';
+                break;
             case 2:
                 $txt_val = 'จักษุ(ญ)';
+                break;
             case 3:
                 $txt_val = 'พิเศษ';
+                break;
             default:
                 $txt_val = '';
+                break;
         }
 
         $sql3 = "INSERT INTO work_head SET work_id='".$work_id."',txt='".$caption."',txt_val='".$txt_val."' ";
@@ -142,8 +146,8 @@
         $sql6 = "INSERT INTO work_head SET work_id='".$work_id."',txt='".$txt3."',txt_val='".$txt_val3."' ";
         $results6 = dbQuery($sql6);
 
-        $sql7 = "INSERT INTO work_head SET work_id='".$work_id."',txt='".$txt4."',txt_val='".$txt_val4."' ";
-        $results7 = dbQuery($sql7);
+        // $sql7 = "INSERT INTO work_head SET work_id='".$work_id."',txt='".$txt4."',txt_val='".$txt_val4."' ";
+        // $results7 = dbQuery($sql7);
 
         $sql8 = "INSERT INTO work_head SET work_id='".$work_id."',txt='".$txt5."',txt_val='".$txt_val5."' ";
         $results8 = dbQuery($sql8);
@@ -257,12 +261,16 @@
         switch ($txt) {
             case 1:
                 $txt_val = 'จักษุ(ช)';
+                break;
             case 2:
                 $txt_val = 'จักษุ(ญ)';
+                break;
             case 3:
                 $txt_val = 'พิเศษ';
+                break;
             default:
                 $txt_val = '';
+                break;
         }
 
         $sql3 = "INSERT INTO work_head SET work_id='".$work_id."',txt='".$caption."',txt_val='".$txt_val."' ";
