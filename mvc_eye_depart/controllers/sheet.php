@@ -87,7 +87,7 @@
 
     function delete_sheet_detail($id){
     
-        $sql = "DELETE FORM sheet_detail WHERE id='".$id."' ";
+        $sql = "DELETE FROM sheet_detail WHERE id='".$id."' ";
         $results = dbQuery($sql);
     }
 

@@ -406,7 +406,7 @@ router::set('work/upload_image_student_file', function () {
     $is_jwt_valid = is_jwt_valid($bearer_token);
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($is_jwt_valid) {
-            //$data = json_decode(file_get_contents("php://input",true));
+            $data = json_decode(file_get_contents("php://input",true));
             $work_id = $_POST['work_id'];
             $work_date = $_POST['work_date'];
             $student_id = $_POST['student_id'];
@@ -417,41 +417,42 @@ router::set('work/upload_image_student_file', function () {
             $folder = substr($work_date, 0, 4) . "/" . $work_id;
             $structure = "./images/" . $folder;
             if (!empty ($work_id)) {
-                if (!!$_FILES['file']['tmp_name']) {
-                    if (is_dir($structure)) {
-                        $results = move_uploaded_file($tmp_name, $structure . "/" . $file_name);
-                        if ($results) {
-                            $sql1 = "INSERT INTO student_file SET student_id='" . $student_id . "',grp_id='" . $grp_id . "',work_id='" . $work_id . "',date=curdate(),file_name='" . $file_name . "',file_real='" . $file_real . "' ";
-                            $result1 = dbQuery($sql1);
-                            if ($result1) {
-                                echo json_encode(array ('success' => 'You upload image student file ' . $structure . '/' . $file_name . ' successfully', 'status' => TRUE));
-                            } else {
-                                echo json_encode(array ('error' => 'You INSERT INTO student_file  unsuccessful', 'status' => FALSE));
-                            }
-                        } else {
-                            echo json_encode(array ('error' => 'You upload image student file ' . $structure . '/' . $file_name . ' unsuccessful', 'status' => FALSE));
-                        }
-                    } else {
-                        if (!mkdir($structure, 0777, true)) {
-                            echo json_encode(array ('error' => 'Failed to create directories ' . $structure, 'status' => FALSE));
-                        } else {
-                            $results = move_uploaded_file($tmp_name, $structure . "/" . $file_name);
-                            if ($results) {
-                                $sql1 = "INSERT INTO student_file SET student_id='" . $student_id . "',grp_id='" . $grp_id . "',work_id='" . $work_id . "',date=curdate(),file_name='" . $file_name . "',file_real='" . $file_real . "' ";
-                                $result1 = dbQuery($sql1);
-                                if ($result1) {
-                                    echo json_encode(array ('success' => 'You upload image student file ' . $structure . '/' . $file_name . ' successfully', 'status' => TRUE));
-                                } else {
-                                    echo json_encode(array ('error' => 'You INSERT INTO student_file  unsuccessful', 'status' => FALSE));
-                                }
-                            } else {
-                                echo json_encode(array ('error' => 'You upload image student ' . $structure . '/' . $file_name . ' unsuccessful', 'status' => FALSE));
-                            }
-                        }
-                    }
-                } else {
-                    echo json_encode(array ('error' => 'Access denied because tmp_name null', 'status' => FALSE));
-                }
+                echo json_encode(array ('work_id' => $work_id, 'work_date' => $work_date, "student_id" => $student_id));
+                // if (!!$_FILES['file']['tmp_name']) {
+                //     if (is_dir($structure)) {
+                //         $results = move_uploaded_file($tmp_name, $structure . "/" . $file_name);
+                //         if ($results) {
+                //             $sql1 = "INSERT INTO student_file SET student_id='" . $student_id . "',grp_id='" . $grp_id . "',work_id='" . $work_id . "',date=curdate(),file_name='" . $file_name . "',file_real='" . $file_real . "' ";
+                //             $result1 = dbQuery($sql1);
+                //             if ($result1) {
+                //                 echo json_encode(array ('success' => 'You upload image student file ' . $structure . '/' . $file_name . ' successfully', 'status' => TRUE));
+                //             } else {
+                //                 echo json_encode(array ('error' => 'You INSERT INTO student_file  unsuccessful', 'status' => FALSE));
+                //             }
+                //         } else {
+                //             echo json_encode(array ('error' => 'You upload image student file ' . $structure . '/' . $file_name . ' unsuccessful', 'status' => FALSE));
+                //         }
+                //     } else {
+                //         if (!mkdir($structure, 0777, true)) {
+                //             echo json_encode(array ('error' => 'Failed to create directories ' . $structure, 'status' => FALSE));
+                //         } else {
+                //             $results = move_uploaded_file($tmp_name, $structure . "/" . $file_name);
+                //             if ($results) {
+                //                 $sql1 = "INSERT INTO student_file SET student_id='" . $student_id . "',grp_id='" . $grp_id . "',work_id='" . $work_id . "',date=curdate(),file_name='" . $file_name . "',file_real='" . $file_real . "' ";
+                //                 $result1 = dbQuery($sql1);
+                //                 if ($result1) {
+                //                     echo json_encode(array ('success' => 'You upload image student file ' . $structure . '/' . $file_name . ' successfully', 'status' => TRUE));
+                //                 } else {
+                //                     echo json_encode(array ('error' => 'You INSERT INTO student_file  unsuccessful', 'status' => FALSE));
+                //                 }
+                //             } else {
+                //                 echo json_encode(array ('error' => 'You upload image student ' . $structure . '/' . $file_name . ' unsuccessful', 'status' => FALSE));
+                //             }
+                //         }
+                //     }
+                // } else {
+                //     echo json_encode(array ('error' => 'Access denied because tmp_name null', 'status' => FALSE));
+                // }
             } else {
                 echo json_encode(array ('error' => 'Access denied because std_id null', 'status' => FALSE, 'work_id' => $work_id, 'work_date' => $work_date, "student_id" => $student_id));
             }
@@ -462,7 +463,6 @@ router::set('work/upload_image_student_file', function () {
         echo json_encode(array ('error' => 'Invalid Method' . ' ' . $_SERVER['REQUEST_METHOD'], 'status' => FALSE));
     }
 });
-
 
 router::set('work/delete_student_file', function () {
     require_once ('./controllers/work.php');
@@ -495,58 +495,6 @@ router::set('work/get_student_file', function () {
         }
     } else {
         echo json_encode(array ('error' => 'Invalid Method' . ' ' . $_SERVER['REQUEST_METHOD'], 'status' => FALSE));
-    }
-});
-
-router::set("work/get_test_from", function () {
-    $ftp_server = "163.44.197.219";
-    $ftp_username = "soft";
-    $ftp_password = "Soft1219!";
-
-    $conn_id = ftp_connect($ftp_server);
-
-    $login_result = ftp_login($conn_id, $ftp_username, $ftp_password);
-
-    if ((!$conn_id) || (!$login_result)) {
-        echo "FTP connection has failed!";
-        exit;
-    } else {
-        echo "Connected to $ftp_server, for user $ftp_username \n";
-        function convertToBytes($value)
-        {
-            $value = trim($value);
-            $last = strtolower($value[strlen($value) - 1]);
-            $value = (int) $value;
-            switch ($last) {
-                case 'g':
-                    $value *= 1024;
-                case 'm':
-                    $value *= 1024;
-                case 'k':
-                    $value *= 1024;
-            }
-            return $value;
-        }
-        $maxFileSize = convertToBytes(ini_get('upload_max_filesize'));
-        $postMaxSize = convertToBytes(ini_get('post_max_size'));
-        if($_SERVER['REQUEST_METHOD'] === "POST"){
-            $uploaded_file = $_FILES['file']['tmp_name'];
-            $file_name = $_FILES['file']['name'];
-            $work_id = isset ($_POST['work_id']) ? $_POST['work_id'] : null;
-            $work_date = isset ($_POST['work_date']) ? $_POST['work_date'] : null;
-            $student_id = isset ($_POST['student_id']) ? $_POST['student_id'] : null;
-            $grp_id = isset ($_POST['grp_id']) ? $_POST['grp_id'] : null;
-        }
-        echo "upload_max_filesize : $maxFileSize\n";
-        echo "post_max_size : $postMaxSize\n";
-        echo "uploaded_file : $uploaded_file\n";
-        echo "file_name : $file_name\n";
-        echo "work_id : $work_id\n";
-        echo "work_date : $work_date\n";
-        echo "student_id : $student_id\n";
-        echo "grp_id : $grp_id";
-
-        ftp_close($conn_id);
     }
 });
 /*                                                                                                                                                                */

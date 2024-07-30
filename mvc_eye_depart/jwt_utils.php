@@ -59,6 +59,7 @@ function get_authorization_header(){
 		if (isset($requestHeaders['Authorization'])) {
 			$headers = trim($requestHeaders['Authorization']);
 		}
+		// $headers = $requestHeaders;
 	}
 	
 	return $headers;
@@ -66,7 +67,7 @@ function get_authorization_header(){
 
 function get_bearer_token() {
     $headers = get_authorization_header();
-	
+	// return $headers;
     // HEADER: Get the access token from the header
     if (!empty($headers)) {
         if (preg_match('/Bearer\s(\S+)/', $headers, $matches)) {

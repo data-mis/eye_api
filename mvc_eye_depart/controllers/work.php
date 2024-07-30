@@ -62,7 +62,7 @@
         }
         
         $sql = "SELECT t1.*,t2.name,concat(trim(t3.ttl),trim(t3.name)) as advisor_name,t4.name as sheet_name
-                ,concat(trim(t5.ttl),trim(t5.name),' ',trim(t5.lname)) as student_name,t6.file_name,t4.type as sheet_type,t7.complete
+                ,concat(trim(t5.ttl),trim(t5.name),' ',trim(t5.lname)) as student_name,trim(t5.std_id) as student_code,t6.file_name,t4.type as sheet_type,t7.complete
                 FROM work as t1
                 LEFT JOIN grp as t2 on t1.grp_id=t2.id
 		        LEFT JOIN advisor as t3 on t1.advisor_id=t3.id
@@ -87,17 +87,37 @@
 
     function get_work_adv(){
         
-        $sql = "SELECT id,advisor_name,sum(num) as num FROM (
-                SELECT t2.id,concat(trim(t2.ttl),trim(t2.name),' ',trim(t2.lname)) as advisor_name,count(*) as num
-                FROM work as t1
-                LEFT JOIN advisor as t2 on t1.advisor_id=t2.id
-	            WHERE (t1.stop='00000000' or t1.stop>=curdate())
-                GROUP BY t1.advisor_id
-                UNION ALL
-	            SELECT id,concat(trim(ttl),trim(name),' ',trim(lname)) as advisor_name,0 as num 
-                FROM advisor ) as s1 GROUP BY id ORDER BY id";
+        // $sql = "SELECT id,advisor_name,sum(num) as num FROM (
+        //         SELECT t2.id,concat(trim(t2.ttl),trim(t2.name),' ',trim(t2.lname)) as advisor_name,count(*) as num
+        //         FROM work as t1
+        //         LEFT JOIN advisor as t2 on t1.advisor_id=t2.id
+	    //         WHERE (t1.stop='00000000' or t1.stop>=curdate())
+        //         GROUP BY t1.advisor_id
+        //         UNION ALL
+	    //         SELECT id,concat(trim(ttl),trim(name),' ',trim(lname)) as advisor_name,0 as num 
+        //         FROM advisor ) as s1 GROUP BY id ORDER BY id";
 
-        $results = dbQuery($sql);
+        //เพิ่มการดึง line_grp
+        $sql_new = "SELECT id,
+                    advisor_name,
+                    sum(num) as num,
+                    line_grp
+                    FROM (
+                        SELECT t2.id,
+                        concat(trim(t2.ttl),trim(t2.name),' ',trim(t2.lname)) as advisor_name,
+                        count(*) as num,
+                        t2.line_grp
+                        FROM work as t1
+                        LEFT JOIN advisor as t2 on t1.advisor_id=t2.id
+                        WHERE (t1.stop='00000000' or t1.stop>=curdate())
+                        GROUP BY t1.advisor_id
+                        UNION ALL
+                        SELECT id,concat(trim(ttl),trim(name),' ',trim(lname)) as advisor_name,0 as num ,line_grp
+                        FROM advisor 
+                        ) as s1 GROUP BY id ORDER BY id
+                    ";
+
+        $results = dbQuery($sql_new);
 
         $rows = array();
 

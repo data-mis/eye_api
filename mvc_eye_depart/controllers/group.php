@@ -94,17 +94,22 @@
         while($row = dbFetchAssoc($results)) {
             $name = $row['code'];
 
-            $sql1 = "INSERT INTO grp SET year_='".$year."',name='".$name."' ";
-
+            $sql1 = "SELECT *  FROM grp WHERE year_='".$year."' and name='".$name."' ";
             $results1 = dbQuery($sql1);
+            $row1 = dbFetchAssoc($results1);
             
+            if(empty($row1['name']) || is_null($row1['name'])) {
+                $sql2 = "INSERT INTO grp SET year_='".$year."',name='".$name."' ";
+                $results2 = dbQuery($sql2);
+            }
+         
         }
 
-        if($results1) {
-            echo json_encode(array('success' => 'You add group successfully','status' => TRUE));
-        } else {
-            echo json_encode(array('error' => 'Something went wrong, please contact administrator','status' => FALSE));
-        }
+        // if($results1) {
+        //     echo json_encode(array('success' => 'You add group successfully','status' => TRUE));
+        // } else {
+        //     echo json_encode(array('error' => 'Something went wrong, please contact administrator','status' => FALSE));
+        // }
 
     }
 
