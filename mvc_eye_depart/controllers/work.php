@@ -62,18 +62,21 @@
         }
         
         $sql = "SELECT t1.*,t2.name,concat(trim(t3.ttl),trim(t3.name)) as advisor_name,t4.name as sheet_name
-                ,concat(trim(t5.ttl),trim(t5.name),' ',trim(t5.lname)) as student_name,t6.file_name,t4.type as sheet_type,t7.complete
+                ,concat(trim(t5.ttl),trim(t5.name),' ',trim(t5.lname)) as student_name,trim(t5.std_id) as student_code,t6.file_name,t4.type as sheet_type,t7.complete
+                ,t8.txt_val as topic
                 FROM work as t1
                 LEFT JOIN grp as t2 on t1.grp_id=t2.id
-		        LEFT JOIN advisor as t3 on t1.advisor_id=t3.id
-		        LEFT JOIN sheet as t4 on t1.sheet_id=t4.id
-		        LEFT JOIN student as t5 on t1.student_id=t5.id
-		        LEFT JOIN student_file as t6 on t1.id=t6.work_id
-		        LEFT JOIN work_detail as t7 on t1.id=t7.work_id and t7.complete=1
-	            WHERE t1.date>='".$beg."' AND t1.date<='".$end."' 
+                LEFT JOIN advisor as t3 on t1.advisor_id=t3.id
+                LEFT JOIN sheet as t4 on t1.sheet_id=t4.id
+                LEFT JOIN student as t5 on t1.student_id=t5.id
+                LEFT JOIN student_file as t6 on t1.id=t6.work_id
+                LEFT JOIN work_detail as t7 on t1.id=t7.work_id and t7.complete=1
+                LEFT JOIN work_head as t8 on t1.id = t8.work_id
+                WHERE t1.date>='".$beg."' AND t1.date<='".$end."' 
                 AND t1.sheet_id='".$sheet_id."' $comp
                 GROUP BY t1.id
-	            ORDER BY t1.id ";
+                ORDER BY t1.id
+		";
 
         $results = dbQuery($sql);
 
@@ -87,17 +90,37 @@
 
     function get_work_adv(){
         
-        $sql = "SELECT id,advisor_name,sum(num) as num FROM (
-                SELECT t2.id,concat(trim(t2.ttl),trim(t2.name),' ',trim(t2.lname)) as advisor_name,count(*) as num
-                FROM work as t1
-                LEFT JOIN advisor as t2 on t1.advisor_id=t2.id
-	            WHERE (t1.stop='00000000' or t1.stop>=curdate())
-                GROUP BY t1.advisor_id
-                UNION ALL
-	            SELECT id,concat(trim(ttl),trim(name),' ',trim(lname)) as advisor_name,0 as num 
-                FROM advisor ) as s1 GROUP BY id ORDER BY id";
+        // $sql = "SELECT id,advisor_name,sum(num) as num FROM (
+        //         SELECT t2.id,concat(trim(t2.ttl),trim(t2.name),' ',trim(t2.lname)) as advisor_name,count(*) as num
+        //         FROM work as t1
+        //         LEFT JOIN advisor as t2 on t1.advisor_id=t2.id
+	    //         WHERE (t1.stop='00000000' or t1.stop>=curdate())
+        //         GROUP BY t1.advisor_id
+        //         UNION ALL
+	    //         SELECT id,concat(trim(ttl),trim(name),' ',trim(lname)) as advisor_name,0 as num 
+        //         FROM advisor ) as s1 GROUP BY id ORDER BY id";
 
-        $results = dbQuery($sql);
+        //เพิ่มการดึง line_grp
+        $sql_new = "SELECT id,
+                    advisor_name,
+                    sum(num) as num,
+                    line_grp
+                    FROM (
+                        SELECT t2.id,
+                        concat(trim(t2.ttl),trim(t2.name),' ',trim(t2.lname)) as advisor_name,
+                        count(*) as num,
+                        t2.line_grp
+                        FROM work as t1
+                        LEFT JOIN advisor as t2 on t1.advisor_id=t2.id
+                        WHERE (t1.stop='00000000' or t1.stop>=curdate())
+                        GROUP BY t1.advisor_id
+                        UNION ALL
+                        SELECT id,concat(trim(ttl),trim(name),' ',trim(lname)) as advisor_name,0 as num ,line_grp
+                        FROM advisor 
+                        ) as s1 GROUP BY id ORDER BY id
+                    ";
+
+        $results = dbQuery($sql_new);
 
         $rows = array();
 
@@ -175,14 +198,28 @@
         }
         
         /*  เกิน 3 วันไม่ได้คะแนน  */ 
-        if(date('Y-M-d',strtotime($txt_val7_1))-date('Y-M-d',strtotime($txt_val6_1)) > 3) {
+        //นิคแก้ไขตัวเช็ควัน
+        $timecheck1 = strtotime(strval($txt_val7_1));
+        $timecheck2 = strtotime(strval($txt_val6_1));
+        if($timecheck1 !== false&&$timecheck2 !== false){
+           $dayDef = ($timecheck1-$timecheck2) / (60*60*24);
+           if($dayDef > 3){
             $sql14 = "INSERT INTO work_score SET work_detail_id='".$work_detail_id."',score=0 ";
             $results14 = dbQuery($sql12);
-        } else {
+           }else{
             $sql15 = "INSERT INTO work_score SET work_detail_id='".$work_detail_id."',score=1 ";
             $results15 = dbQuery($sql15);
+           }
         }
-         
+        // if(date('Y-M-d',strtotime($txt_val7_1))-date('Y-M-d',strtotime($txt_val6_1)) > 3) {
+        //     $sql14 = "INSERT INTO work_score SET work_detail_id='".$work_detail_id."',score=0 ";
+        //     $results14 = dbQuery($sql12);
+        // } else {
+        //     $sql15 = "INSERT INTO work_score SET work_detail_id='".$work_detail_id."',score=1 ";
+        //     $results15 = dbQuery($sql15);
+        // }
+        //นิคเพิ่มรายการ ส่งค่า workID กลับ
+        echo json_encode(array("work_id"=>$work_id,"status"=>TRUE));
     }
 
     function add_work_02($sheet_id,$advisor_id,$student_id,$date,$time_begin,$time_end){
@@ -190,7 +227,13 @@
                 ,time_begin='".$time_begin."',time_end='".$time_end."' ";
 
         $results = dbQuery($sql);
-        
+
+        //นิคเพิ่มดึง last id
+        $sql1 = "SELECT last_insert_id() as last_ ";
+        $results1 = dbQuery($sql1);
+        $row = dbFetchAssoc($results1);
+        $work_id = $row['last_'];
+        echo json_encode(array("work_id"=>$work_id,"status"=>TRUE));
     }
 
     function add_work_03($sheet_id,$advisor_id,$grp_id,$date,$time_begin,$time_end){
@@ -198,6 +241,12 @@
                 ,time_begin='".$time_begin."',time_end='".$time_end."' ";
 
         $results = dbQuery($sql);
+        //นิคเพิ่มดึง last id
+        $sql1 = "SELECT last_insert_id() as last_ ";
+        $results1 = dbQuery($sql1);
+        $row = dbFetchAssoc($results1);
+        $work_id = $row['last_'];
+        echo json_encode(array("work_id"=>$work_id,"status"=>TRUE));
         
     }
     
@@ -206,6 +255,12 @@
                 ,time_begin='".$time_begin."',time_end='".$time_end."' ";
 
         $results = dbQuery($sql);
+        //นิคเพิ่มดึง last id
+        $sql1 = "SELECT last_insert_id() as last_ ";
+        $results1 = dbQuery($sql1);
+        $row = dbFetchAssoc($results1);
+        $work_id = $row['last_'];
+        echo json_encode(array("work_id"=>$work_id,"status"=>TRUE));
         
     }
 
@@ -222,6 +277,7 @@
 
         $sql3 = "INSERT INTO work_head SET work_id='".$work_id."',txt='หัวข้อเรื่อง',txt_val='".$txt_val."' ";
         $results3 = dbQuery($sql3);
+        echo json_encode(array("work_id"=>$work_id,"status"=>TRUE));//เพิ่มส่ง work_id
         
     }
 
@@ -238,6 +294,7 @@
         
         $sql3 = "INSERT INTO work_head SET work_id='".$work_id."',txt='หัวข้อเรื่อง',txt_val='".$txt_val."' ";
         $results3 = dbQuery($sql3);
+        echo json_encode(array("work_id"=>$work_id,"status"=>TRUE)); //เพิ่มส่ง work_id
         
     }
 
@@ -246,7 +303,12 @@
                 ,time_begin='".$time_begin."',time_end='".$time_end."' ";
 
         $results = dbQuery($sql);
-        
+        //นิคเพิ่มดึง last id
+        $sql1 = "SELECT last_insert_id() as last_ ";
+        $results1 = dbQuery($sql1);
+        $row = dbFetchAssoc($results1);
+        $work_id = $row['last_'];
+        echo json_encode(array("work_id"=>$work_id,"status"=>TRUE));
     }
                 
     function edit_work_01($work_id,$sheet_id,$advisor_id,$student_id,$date,$time_begin,$time_end,$caption,$txt,$txt1,$txt_val1,$txt2,$txt_val2,$txt3,$txt_val3,$txt5,$txt_val5,$txt6,$txt_val6,$txt7,$txt_val7,$txt_val6_1,$txt_val7_1){
@@ -409,7 +471,7 @@
 
     function get_work_student(){
         
-        $sql = "SELECT id,ttl,name,lname FROM student WHERE stop!='0000-00-00' ";
+        $sql = "SELECT id,ttl,name,lname,year_ as year,std_id FROM student WHERE stop!='0000-00-00' ";
 
         $results = dbQuery($sql);
 

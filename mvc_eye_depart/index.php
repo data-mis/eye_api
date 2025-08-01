@@ -8,6 +8,7 @@ require_once('./router/teacher/teacher.php');
 require_once('./router/group/group.php');
 require_once('./router/work/work.php');
 require_once('./router/sheet/sheet.php');
+require_once('./router/linenotify/linenotifyRouter.php');
 
 /* function เช็คการเรียกใช้ class */
     function __autoload($class_name) {

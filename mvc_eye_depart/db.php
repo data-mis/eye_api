@@ -1,8 +1,8 @@
 <?php
 
-    $servername = "11.0.0.1";
-    $username = "root";
-    $password = "istyle8885";
+    $servername = "163.44.197.219";
+    $username = "webservice";
+    $password = "mis01";
     $dbname = "eye_depart";
     
     // Create connection
